@@ -14,7 +14,7 @@ func NewHTTPServer(cfg *config.Config) *http.Server {
 	mux := http.NewServeMux()
 
 	// Register routes.
-	handlers.GetAllUsers(mux)
+	handlers.UserRoutes(mux)
 
 	return &http.Server{
 		Addr:         cfg.HTTPServer.Address,
