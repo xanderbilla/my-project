@@ -37,6 +37,8 @@ go.work.sum
 
 # Application binary
 /cmd/my-project/my-project
+storage
+/config
 
 # Debug files
 __debug_bin
