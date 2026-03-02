@@ -1,4 +1,4 @@
-module github.com/emmabites/my-project
+module github.com/xanderbilla/my-project
 
 go 1.25.0
 
