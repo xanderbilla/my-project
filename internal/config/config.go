@@ -10,6 +10,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -45,21 +46,80 @@ type Config struct {
 //   - validation fails
 func LoadConfig(path string) (*Config, error) {
 	if path == "" {
+		slog.Error("config path is required but not provided")
 		return nil, fmt.Errorf("config path is required")
 	}
+
+	slog.Debug("reading YAML configuration file", "path", path)
 
 	var cfg Config
 
 	// Read YAML and apply environment overrides.
 	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
+		slog.Error("failed to read YAML configuration", "path", path, "error", err)
 		return nil, fmt.Errorf("failed to read config: %w", err)
 	}
 
+	slog.Debug("YAML configuration parsed successfully", "env", cfg.Env, "http_address", cfg.HTTPServer.Address)
+
 	// Perform additional logical validation.
 	if err := cfg.Validate(); err != nil {
+		slog.Error("configuration validation failed", "error", err)
 		return nil, fmt.Errorf("config validation failed: %w", err)
 	}
 
+	// Warn if using default env
+	if cfg.Env == "prod" {
+		slog.Warn("using default environment", "env", "prod", "recommendation", "explicitly set ENV variable")
+	}
+
+	slog.Debug("configuration validation passed")
+	return &cfg, nil
+}
+
+// LoadFromEnv loads configuration from environment variables only.
+// No YAML file is required when using this method.
+//
+// This is useful for:
+//   - Production deployments (using platform environment variables)
+//   - Docker containers (using docker-compose or Kubernetes secrets)
+//   - CI/CD pipelines
+//
+// All required environment variables must be set:
+//   - HTTP_ADDRESS
+//   - STORAGE_PATH
+//
+// Optional environment variables:
+//   - ENV (defaults to "prod")
+//
+// Returns an error if:
+//   - required environment variables are missing
+//   - validation fails
+func LoadFromEnv() (*Config, error) {
+	slog.Debug("reading configuration from environment variables")
+
+	var cfg Config
+
+	// Read environment variables and apply defaults.
+	if err := cleanenv.ReadEnv(&cfg); err != nil {
+		slog.Error("failed to read environment variables", "error", err)
+		return nil, fmt.Errorf("failed to read environment variables: %w", err)
+	}
+
+	slog.Debug("environment variables parsed successfully", "http_address", cfg.HTTPServer.Address, "storage_path", cfg.StoragePath)
+
+	// Perform additional logical validation.
+	if err := cfg.Validate(); err != nil {
+		slog.Error("configuration validation failed", "error", err)
+		return nil, fmt.Errorf("config validation failed: %w", err)
+	}
+
+	// Warn if using default environment
+	if cfg.Env == "prod" {
+		slog.Warn("using default environment", "env", "prod", "recommendation", "explicitly set ENV variable")
+	}
+
+	slog.Debug("configuration validation passed")
 	return &cfg, nil
 }
 
