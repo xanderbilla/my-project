@@ -3,16 +3,17 @@
 package response
 
 import (
-	"encoding/json"
 	"net/http"
+
+	json "github.com/goccy/go-json"
 )
 
 // JSON writes a JSON response to the client.
 //
 // It:
-//   1. Sets the Content-Type header
-//   2. Writes the HTTP status code
-//   3. Encodes the given data as JSON
+//  1. Sets the Content-Type header
+//  2. Writes the HTTP status code
+//  3. Encodes the given data as JSON
 //
 // This function helps avoid repeating the same
 // response-writing code in every handler.
