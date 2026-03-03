@@ -34,11 +34,15 @@ go.work.sum
 # Environment variables
 .env
 .env.local
+.env.*.local
 
 # Application binary
 /cmd/my-project/my-project
 storage
-/config
+
+# Config files (track *.example.yaml but ignore actual configs)
+/config/*.yaml
+!/config/*.example.yaml
 
 # Debug files
 __debug_bin
