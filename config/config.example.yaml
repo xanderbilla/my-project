@@ -1,0 +1,19 @@
+# Example Configuration File
+# Copy this file to dev.yaml, staging.yaml, or prod.yaml
+# and customize for your environment
+
+# Runtime environment (dev, staging, prod)
+env: "dev"
+
+# Storage path for database or files
+storage_path: "storage/dev-storage.db"
+
+# HTTP server configuration
+http-server:
+  # Server bind address
+  # Examples: "localhost:8080", ":8080", "0.0.0.0:8080"
+  address: "localhost:8080"
+
+# NOTE: All values can be overridden by environment variables:
+#   ENV, STORAGE_PATH, HTTP_ADDRESS
+# See .env.example for all available environment variables
