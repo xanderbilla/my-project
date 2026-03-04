@@ -24,6 +24,19 @@ make run-quick
 
 That's it! Your server is running on http://localhost:8080
 
+## Development
+
+For comprehensive development documentation including setup, testing, debugging, and release process:
+
+**[📖 Read the Development Guide](DEVELOPMENT.md)**
+
+Quick links:
+- [Development Setup](DEVELOPMENT.md#development-setup)
+- [Project Structure](DEVELOPMENT.md#project-structure)
+- [Testing Guide](DEVELOPMENT.md#testing)
+- [Release Process](DEVELOPMENT.md#release-process)
+- [CI/CD Pipeline](DEVELOPMENT.md#cicd-pipeline)
+
 ## Common Commands
 
 ```bash
@@ -208,6 +221,13 @@ my-project/
 ## About
 
 This is a learning project to demonstrate best practices in Go API development. Feel free to use it as a reference for your own projects.
+
+## Contributing
+
+We welcome contributions! Please see:
+- [DEVELOPMENT.md](DEVELOPMENT.md) - Development guide and setup
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Community guidelines
 
 ## License
 
