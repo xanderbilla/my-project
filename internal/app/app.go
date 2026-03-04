@@ -34,26 +34,45 @@ func New(cfg *config.Config) *App {
 
 // Run starts the application and handles graceful shutdown.
 func (a *App) Run() error {
+	slog.Debug("initializing server goroutine")
+
 	// Start server in background.
 	go func() {
-		slog.Info("starting HTTP server", slog.String("address", a.server.Addr))
+		slog.Info("server starting", "address", a.server.Addr)
+		slog.Debug("server listening for incoming connections", "address", a.server.Addr, "protocol", "http")
 
 		if err := a.server.ListenAndServe(); err != nil &&
 			!errors.Is(err, http.ErrServerClosed) {
-			slog.Error("server failed", slog.Any("error", err))
+			slog.Error("server failed to start", "error", err, "address", a.server.Addr)
+			slog.Warn("💡 port might be in use", "tip", "run 'make run-quick' to auto-kill old server")
 			os.Exit(1)
 		}
+		slog.Debug("server stopped accepting connections")
 	}()
+
+	slog.Debug("registering signal handlers", "signals", []string{"SIGINT", "SIGTERM"})
 
 	// Wait for termination signal.
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	slog.Debug("waiting for shutdown signal")
 	<-stop
 
-	slog.Info("shutting down server")
+	slog.Info("shutdown signal received, shutting down gracefully")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	return a.server.Shutdown(ctx)
+	slog.Debug("waiting for active connections to close", "timeout", "5s")
+	err := a.server.Shutdown(ctx)
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			slog.Warn("graceful shutdown timeout exceeded, forcing shutdown", "timeout", "5s")
+		} else {
+			slog.Error("error during shutdown", "error", err)
+		}
+	} else {
+		slog.Debug("shutdown completed successfully")
+	}
+	return err
 }
