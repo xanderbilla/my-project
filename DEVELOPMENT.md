@@ -96,22 +96,45 @@ go mod tidy
 
 ### Environment Variables
 
-#### Development
+The application uses environment variables for configuration. You can set them via:
+
+- `.env` file (for local development)
+- `config/dev.yaml` file (YAML configuration)
+- System environment variables (for Docker/production)
+
+#### Required Variables
+
+These **must** be set for the application to start:
+
+- `HTTP_ADDRESS` - Server bind address (e.g., `:8080`, `localhost:8080`, `0.0.0.0:8080`)
+- `STORAGE_PATH` - Path to storage file (e.g., `storage/dev-storage.db`, `/tmp/storage.db`)
+
+#### Optional Variables
+
+- `ENV` - Environment mode: `dev`, `staging`, `prod` (default: `prod`)
+- `LOG_LEVEL` - Logging level: `DEBUG`, `INFO`, `WARN`, `ERROR` (default: `INFO`)
+- `LOG_FORMAT` - Log format: `json`, `text` (default: `json`)
+
+#### Development Example
 
 Create a `.env` file in the root directory:
 
 ```bash
-PORT=8080
+HTTP_ADDRESS=:8080
+STORAGE_PATH=storage/dev-storage.db
+ENV=dev
 LOG_LEVEL=debug
 LOG_FORMAT=json
 ```
 
-#### Production
+#### Production Example
 
 Set these environment variables in your deployment:
 
 ```bash
-PORT=8080
+HTTP_ADDRESS=:8080
+STORAGE_PATH=/data/storage.db
+ENV=prod
 LOG_LEVEL=info
 LOG_FORMAT=json
 READ_TIMEOUT=15s
@@ -314,8 +337,27 @@ docker run -p 8080:8080 -v $(pwd):/app my-project:dev
 # Build production image
 docker build -t my-project:latest .
 
-# Run production image
-docker run -p 8080:8080 my-project:latest
+# Create .env file for Docker
+cat > .env << EOF
+HTTP_ADDRESS=:8080
+STORAGE_PATH=/tmp/storage.db
+LOG_LEVEL=info
+ENV=prod
+EOF
+
+# Run production image with .env file
+docker run -p 8080:8080 --env-file .env my-project:latest
+
+# Pull from registry and run
+docker pull ghcr.io/xanderbilla/my-project:latest
+docker run -p 8080:8080 --env-file .env ghcr.io/xanderbilla/my-project:latest
+
+# With persistent storage
+docker run -p 8080:8080 \
+  --env-file .env \
+  -e STORAGE_PATH=/data/storage.db \
+  -v $(pwd)/storage:/data \
+  ghcr.io/xanderbilla/my-project:latest
 ```
 
 ### Docker Compose

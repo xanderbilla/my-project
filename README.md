@@ -18,27 +18,42 @@ A REST API learning project built with Go demonstrating proper error handling, s
 
 Pull and run the latest image from Docker Hub or GitHub Container Registry:
 
+**Step 1:** Create a `.env` file:
+
+```bash
+cat > .env << EOF
+HTTP_ADDRESS=:8080
+STORAGE_PATH=/tmp/storage.db
+LOG_LEVEL=info
+ENV=prod
+EOF
+```
+
+**Step 2:** Run with the `.env` file:
+
 ```bash
 # Using Docker Hub
 docker pull docker.io/xanderbilla/my-project:latest
-docker run -p 8080:8080 docker.io/xanderbilla/my-project:latest
+docker run -p 8080:8080 --env-file .env docker.io/xanderbilla/my-project:latest
 
 # OR using GitHub Container Registry
 docker pull ghcr.io/xanderbilla/my-project:latest
-docker run -p 8080:8080 ghcr.io/xanderbilla/my-project:latest
-
-# Run with custom environment variables
-docker run -p 8080:8080 \
-  -e LOG_LEVEL=debug \
-  -e PORT=8080 \
-  ghcr.io/xanderbilla/my-project:latest
+docker run -p 8080:8080 --env-file .env ghcr.io/xanderbilla/my-project:latest
 
 # Use a specific version (recommended for production)
-docker pull ghcr.io/xanderbilla/my-project:v1.0.1
-docker run -p 8080:8080 ghcr.io/xanderbilla/my-project:v1.0.1
+docker run -p 8080:8080 --env-file .env ghcr.io/xanderbilla/my-project:v1.0.1
+
+# With persistent storage (volume mount)
+docker run -p 8080:8080 \
+  --env-file .env \
+  -e STORAGE_PATH=/data/storage.db \
+  -v $(pwd)/storage:/data \
+  ghcr.io/xanderbilla/my-project:latest
 ```
 
 **Available tags:** `latest`, `v1.0.1`, `v1.0.0`, `1.0.1`, `1.0`, `1`
+
+**Note:** The `--env-file .env` flag loads environment variables from your `.env` file. You can override specific variables using additional `-e` flags if needed.
 
 See all [releases](https://github.com/xanderbilla/my-project/releases) for version history.
 
@@ -66,19 +81,38 @@ docker-compose up -d
 
 ## Configuration
 
-All configuration is managed via environment variables. See [.env.example](.env.example) for available options.
+All configuration is managed via environment variables.
 
-Required variables:
+### Required Variables
 
-- `HTTP_ADDRESS` - Server bind address (e.g., `localhost:8080`)
-- `STORAGE_PATH` - Path to storage file (e.g., `storage/dev-storage.db`)
+These **must** be set for the application to run:
 
-Optional variables:
+- `HTTP_ADDRESS` - Server bind address (e.g., `:8080`, `localhost:8080`)
+- `STORAGE_PATH` - Path to storage file (e.g., `storage/dev-storage.db`, `/tmp/storage.db`)
 
-- `ENV` - Environment: dev, staging, prod (default: prod)
-- `LOG_LEVEL` - Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
+### Optional Variables
 
-For detailed configuration guide, see [CONFIGURATION.md](CONFIGURATION.md).
+- `ENV` - Environment: `dev`, `staging`, `prod` (default: `prod`)
+- `LOG_LEVEL` - Log level: `DEBUG`, `INFO`, `WARN`, `ERROR` (default: `INFO`)
+
+### Docker Example with .env File
+
+Create a `.env` file:
+
+```bash
+HTTP_ADDRESS=:8080
+STORAGE_PATH=/tmp/storage.db
+LOG_LEVEL=info
+ENV=prod
+```
+
+Run with the `.env` file:
+
+```bash
+docker run -p 8080:8080 --env-file .env ghcr.io/xanderbilla/my-project:latest
+```
+
+For local development, see [.env.example](.env.example) or the [Configuration Guide](DEVELOPMENT.md#configuration).
 
 ## API Endpoints
 
