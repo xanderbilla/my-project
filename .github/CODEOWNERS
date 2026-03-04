@@ -1,25 +1,43 @@
 # Code Owners
+
 # These owners will be requested for review when someone opens a pull request.
 
 # Default owner for everything in the repo
-*                               @xanderbilla
+
+-                               @xanderbilla
 
 # Workflow files
-/.github/                       @xanderbilla
+
+/.github/ @xanderbilla
+
+# Core application files (Emma's contributions)
+
+cmd/my-project/main.go @xanderbilla @emmabites
+internal/app/app.go @xanderbilla @emmabites
+internal/config/config.go @xanderbilla @emmabites
+internal/handlers/users.go @xanderbilla @emmabites
+internal/server/http.go @xanderbilla @emmabites
+internal/types/user.go @xanderbilla @emmabites
+internal/utils/response/response.go @xanderbilla @emmabites
 
 # Go source code
-*.go                           @xanderbilla
-go.mod                         @xanderbilla
-go.sum                         @xanderbilla
+
+\*.go @xanderbilla
+go.mod @xanderbilla @emmabites
+go.sum @xanderbilla @emmabites
+.gitignore @xanderbilla @emmabites
 
 # Docker files
-Dockerfile*                    @xanderbilla
-docker-compose.yml             @xanderbilla
+
+Dockerfile\* @xanderbilla
+docker-compose.yml @xanderbilla
 
 # Documentation
-*.md                           @xanderbilla
+
+\*.md @xanderbilla
 
 # Configuration
-*.yml                          @xanderbilla
-*.yaml                         @xanderbilla
-.env.example                   @xanderbilla
+
+_.yml @xanderbilla
+_.yaml @xanderbilla
+.env.example @xanderbilla

@@ -34,7 +34,7 @@ make build         # Build executable
 make help          # See all commands
 ```
 
-💡 **Tip:** All tools install automatically when needed!
+Note: All tools install automatically when needed!
 
 ## Configuration
 

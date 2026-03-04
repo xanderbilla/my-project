@@ -2,13 +2,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop, my-project/dev ]
+    branches: [main, develop, my-project/dev]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   workflow_dispatch:
 
 env:
-  GO_VERSION: '1.25.0'
+  GO_VERSION: "1.25.0"
   DOCKER_REGISTRY: docker.io
   DOCKER_IMAGE: xanderbilla/my-project
 
@@ -46,11 +46,11 @@ jobs:
       - name: Format Check
         run: |
           if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-            echo "❌ Code is not formatted. Run 'make fmt' to fix."
+            echo "Code is not formatted. Run 'make fmt' to fix."
             gofmt -s -l .
             exit 1
           else
-            echo "✅ Code is properly formatted"
+            echo "Code is properly formatted"
           fi
 
       - name: Install golangci-lint
@@ -166,7 +166,7 @@ jobs:
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:
-          args: '-no-fail -fmt sarif -out gosec-results.sarif ./...'
+          args: "-no-fail -fmt sarif -out gosec-results.sarif ./..."
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
@@ -233,12 +233,12 @@ jobs:
     steps:
       - name: Deployment Summary
         run: |
-          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Docker Image:** ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Status:** Ready for deployment" >> $GITHUB_STEP_SUMMARY
+          echo "**Docker Image:** ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Ready for deployment" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
@@ -254,7 +254,7 @@ jobs:
     steps:
       - name: Build Status
         run: |
-          echo "## 📊 CI/CD Pipeline Results" >> $GITHUB_STEP_SUMMARY
+          echo "## CI/CD Pipeline Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
