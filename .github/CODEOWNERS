@@ -1,0 +1,25 @@
+# Code Owners
+# These owners will be requested for review when someone opens a pull request.
+
+# Default owner for everything in the repo
+*                               @xanderbilla
+
+# Workflow files
+/.github/                       @xanderbilla
+
+# Go source code
+*.go                           @xanderbilla
+go.mod                         @xanderbilla
+go.sum                         @xanderbilla
+
+# Docker files
+Dockerfile*                    @xanderbilla
+docker-compose.yml             @xanderbilla
+
+# Documentation
+*.md                           @xanderbilla
+
+# Configuration
+*.yml                          @xanderbilla
+*.yaml                         @xanderbilla
+.env.example                   @xanderbilla
