@@ -89,33 +89,52 @@ curl -X DELETE http://localhost:8080/api/users/1
 
 All responses follow a consistent structure:
 
-**Success:**
+**Success Response:**
 
 ```json
 {
-  "status": "success",
-  "data": {},
+  "success": true,
+  "status": 200,
+  "timestamp": "2026-03-04T10:30:00Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000",
+  "path": "/api/users",
+  "method": "GET",
+  "message": "Users retrieved successfully",
+  "data": {
+    "id": 1,
+    "name": "Aman",
+    "email": "aman@example.com",
+    "age": 22
+  },
   "meta": {
-    "timestamp": "2026-03-04T10:30:00Z",
-    "requestId": "550e8400-e29b-41d4-a716-446655440000"
+    "apiVersion": "v1"
   }
 }
 ```
 
-**Error:**
+**Error Response:**
 
 ```json
 {
-  "status": "error",
+  "success": false,
+  "status": 422,
+  "timestamp": "2026-03-04T10:30:00Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000",
+  "path": "/api/users",
+  "method": "POST",
   "error": {
     "type": "VALIDATION_ERROR",
-    "code": "INVALID_INPUT",
-    "message": "Please check your input and try again",
-    "details": []
-  },
-  "meta": {
-    "timestamp": "2026-03-04T10:30:00Z",
-    "requestId": "550e8400-e29b-41d4-a716-446655440000"
+    "code": "INVALID_REQUEST_BODY",
+    "userMessage": "Some fields in your request are invalid.",
+    "developerMessage": "Request validation failed. Check validationErrors for details.",
+    "validationErrors": [
+      {
+        "field": "Age",
+        "message": "Age must be a number, but received a string",
+        "rejectedValue": "22"
+      }
+    ],
+    "retryable": false
   }
 }
 ```

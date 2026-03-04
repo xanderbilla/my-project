@@ -1,5 +1,7 @@
 # Code of Conduct
 
+This project follows a Code of Conduct to ensure a welcoming and inclusive environment for all contributors.
+
 ## Be Respectful
 
 This is a learning project. Everyone is here to learn and improve.
@@ -41,3 +43,9 @@ This applies to all project spaces (issues, pull requests, discussions).
 ## Summary
 
 Be kind, be respectful, and help each other learn.
+
+## Related Documents
+
+- [Contributing Guidelines](CONTRIBUTING.md) - Learn how to contribute to this project
+- [License](LICENSE) - Project license information
+- [README](README.md) - Project documentation
