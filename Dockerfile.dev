@@ -1,0 +1,26 @@
+# Development Dockerfile with hot reload
+FROM golang:1.25-alpine
+
+# Install development dependencies
+RUN apk add --no-cache git make curl
+
+# Install air for hot reload
+RUN go install github.com/air-verse/air@latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code (volumes will override this in docker-compose)
+COPY . .
+
+# Expose port
+EXPOSE 8080
+
+# Run with air for hot reload
+CMD ["air", "-c", ".air.toml"]
