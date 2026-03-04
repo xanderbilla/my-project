@@ -16,6 +16,10 @@ env:
   DOCKER_REGISTRY: docker.io
   DOCKER_IMAGE: xanderbilla/my-project
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   # Create GitHub Release
   create-release:
