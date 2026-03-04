@@ -6,14 +6,23 @@ This guide provides comprehensive information for developers working on My Proje
 
 - [Getting Started](#getting-started)
 - [Development Setup](#development-setup)
+- [Configuration](#configuration)
 - [Project Structure](#project-structure)
 - [Development Workflow](#development-workflow)
 - [Testing](#testing)
 - [Building](#building)
 - [Docker Development](#docker-development)
+- [API Documentation](#api-documentation)
+- [Performance Testing](#performance-testing)
+- [Debugging](#debugging)
+- [Troubleshooting](#troubleshooting)
 - [Release Process](#release-process)
 - [CI/CD Pipeline](#cicd-pipeline)
 - [Contributing](#contributing)
+- [Resources](#resources)
+- [Getting Help](#getting-help)
+- [License](#license)
+- [Maintainers](#maintainers)
 
 ## Getting Started
 
@@ -39,25 +48,76 @@ cd my-project
 go mod download
 ```
 
-### Configuration
+#### Project Dependencies
+
+This project uses the following Go packages:
+
+- **Go 1.25.0+** - Required Go version
+- **github.com/google/uuid** - UUID generation for request IDs
+- **github.com/ilyakaznacheev/cleanenv** - Configuration management from YAML/env
+- **github.com/joho/godotenv** - Environment file (.env) loading
+
+To view all dependencies:
+
+```bash
+go list -m all
+```
+
+To update dependencies:
+
+```bash
+go get -u ./...
+go mod tidy
+```
+
+## Configuration
+
+### Configuration Files
 
 1. Copy the example configuration:
+
    ```bash
    cp config/config.example.yaml config/dev.yaml
    ```
 
 2. Edit `config/dev.yaml` with your local settings:
+
    ```yaml
    server:
      port: 8080
      read_timeout: 15s
      write_timeout: 15s
      idle_timeout: 60s
-   
+
    log:
      level: debug
      format: json
    ```
+
+### Environment Variables
+
+#### Development
+
+Create a `.env` file in the root directory:
+
+```bash
+PORT=8080
+LOG_LEVEL=debug
+LOG_FORMAT=json
+```
+
+#### Production
+
+Set these environment variables in your deployment:
+
+```bash
+PORT=8080
+LOG_LEVEL=info
+LOG_FORMAT=json
+READ_TIMEOUT=15s
+WRITE_TIMEOUT=15s
+IDLE_TIMEOUT=60s
+```
 
 ### Run Locally
 
@@ -281,6 +341,7 @@ docker-compose down
 1. **Update version** and ensure all changes are committed
 
 2. **Create a tag** following semantic versioning (vMAJOR.MINOR.PATCH):
+
    ```bash
    git tag -a v1.0.1 -m "Release v1.0.1 - Description of changes"
    git push origin v1.0.1
@@ -321,6 +382,7 @@ The CI/CD pipeline runs on:
 ### What CI/CD Pipeline Skips
 
 To optimize build time, the pipeline **skips** when you only change:
+
 - All `.md` files (README, CONTRIBUTING, etc.)
 - LICENSE
 - .gitignore
@@ -355,31 +417,6 @@ make build
 make ci
 ```
 
-## Environment Variables
-
-### Development
-
-Create a `.env` file in the root directory:
-
-```bash
-PORT=8080
-LOG_LEVEL=debug
-LOG_FORMAT=json
-```
-
-### Production
-
-Set these environment variables in your deployment:
-
-```bash
-PORT=8080
-LOG_LEVEL=info
-LOG_FORMAT=json
-READ_TIMEOUT=15s
-WRITE_TIMEOUT=15s
-IDLE_TIMEOUT=60s
-```
-
 ## API Documentation
 
 ### Testing Endpoints
@@ -406,6 +443,103 @@ curl -X PUT http://localhost:8080/api/users/1 \
 
 # Delete user
 curl -X DELETE http://localhost:8080/api/users/1
+```
+
+### Response Format
+
+All API responses follow a consistent structure for both success and error cases.
+
+#### Success Response
+
+```json
+{
+  "success": true,
+  "status": 200,
+  "timestamp": "2026-03-04T10:30:00Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000",
+  "path": "/api/users",
+  "method": "GET",
+  "message": "Users retrieved successfully",
+  "data": {
+    "id": 1,
+    "name": "Aman",
+    "email": "aman@example.com",
+    "age": 22
+  },
+  "meta": {
+    "apiVersion": "v1"
+  }
+}
+```
+
+#### Error Response
+
+```json
+{
+  "success": false,
+  "status": 422,
+  "timestamp": "2026-03-04T10:30:00Z",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000",
+  "path": "/api/users",
+  "method": "POST",
+  "error": {
+    "type": "VALIDATION_ERROR",
+    "code": "INVALID_REQUEST_BODY",
+    "userMessage": "Some fields in your request are invalid.",
+    "developerMessage": "Request validation failed. Check validationErrors for details.",
+    "validationErrors": [
+      {
+        "field": "Age",
+        "message": "Age must be a number, but received a string",
+        "rejectedValue": "22"
+      }
+    ],
+    "retryable": false
+  }
+}
+```
+
+#### Response Fields
+
+**Common Fields:**
+
+- `success`: Boolean indicating request success
+- `status`: HTTP status code
+- `timestamp`: ISO 8601 timestamp
+- `requestId`: Unique request identifier for debugging
+- `path`: Request path
+- `method`: HTTP method
+
+**Success Specific:**
+
+- `message`: Human-readable success message
+- `data`: Response payload
+- `meta`: Additional metadata (pagination, API version, etc.)
+
+**Error Specific:**
+
+- `error.type`: Error category (VALIDATION_ERROR, NOT_FOUND, etc.)
+- `error.code`: Specific error code
+- `error.userMessage`: User-friendly error message
+- `error.developerMessage`: Technical error details
+- `error.validationErrors`: Array of field-specific validation errors
+- `error.retryable`: Whether the request can be retried
+
+### Available Make Commands
+
+All build and development commands:
+
+```bash
+make run            # Run the application
+make dev            # Run with auto-reload (requires air)
+make test           # Run all tests
+make test-coverage  # Generate coverage report
+make build          # Build binary to bin/
+make clean          # Remove build artifacts
+make deps           # Download dependencies
+make fmt            # Format code
+make lint           # Run linter
+make help           # Show all commands
 ```
 
 ## Performance Testing
@@ -471,17 +605,20 @@ dlv debug cmd/my-project/main.go
 ### Common Issues
 
 **Port already in use:**
+
 ```bash
 lsof -ti:8080 | xargs kill -9
 ```
 
 **Module issues:**
+
 ```bash
 go mod tidy
 go mod verify
 ```
 
 **Build cache issues:**
+
 ```bash
 go clean -cache
 go clean -modcache

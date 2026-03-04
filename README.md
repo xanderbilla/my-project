@@ -14,6 +14,36 @@ A REST API learning project built with Go demonstrating proper error handling, s
 
 ## Quick Start
 
+### Using Docker (Recommended)
+
+Pull and run the latest image from Docker Hub or GitHub Container Registry:
+
+```bash
+# Using Docker Hub
+docker pull docker.io/xanderbilla/my-project:latest
+docker run -p 8080:8080 docker.io/xanderbilla/my-project:latest
+
+# OR using GitHub Container Registry
+docker pull ghcr.io/xanderbilla/my-project:latest
+docker run -p 8080:8080 ghcr.io/xanderbilla/my-project:latest
+
+# Run with custom environment variables
+docker run -p 8080:8080 \
+  -e LOG_LEVEL=debug \
+  -e PORT=8080 \
+  ghcr.io/xanderbilla/my-project:latest
+
+# Use a specific version (recommended for production)
+docker pull ghcr.io/xanderbilla/my-project:v1.0.1
+docker run -p 8080:8080 ghcr.io/xanderbilla/my-project:v1.0.1
+```
+
+**Available tags:** `latest`, `v1.0.1`, `v1.0.0`, `1.0.1`, `1.0`, `1`
+
+See all [releases](https://github.com/xanderbilla/my-project/releases) for version history.
+
+### Using Local Development
+
 ```bash
 # 1. Copy environment template
 cp .env.example .env
@@ -24,30 +54,15 @@ make run-quick
 
 That's it! Your server is running on http://localhost:8080
 
-## Development
-
-For comprehensive development documentation including setup, testing, debugging, and release process:
-
-**[📖 Read the Development Guide](DEVELOPMENT.md)**
-
-Quick links:
-- [Development Setup](DEVELOPMENT.md#development-setup)
-- [Project Structure](DEVELOPMENT.md#project-structure)
-- [Testing Guide](DEVELOPMENT.md#testing)
-- [Release Process](DEVELOPMENT.md#release-process)
-- [CI/CD Pipeline](DEVELOPMENT.md#cicd-pipeline)
-
-## Common Commands
+### Using Docker Compose
 
 ```bash
-make run-quick     # Start app immediately
-make dev           # Start with auto-reload (changes apply automatically)
-make test          # Run tests
-make build         # Build executable
-make help          # See all commands
-```
+# Start all services
+docker-compose up
 
-Note: All tools install automatically when needed!
+# Start in detached mode
+docker-compose up -d
+```
 
 ## Configuration
 
@@ -98,125 +113,26 @@ curl -X PUT http://localhost:8080/api/users/1 \
 curl -X DELETE http://localhost:8080/api/users/1
 ```
 
-## Response Format
+For detailed API response format, error handling, and examples, see [DEVELOPMENT.md](DEVELOPMENT.md#api-documentation).
 
-All responses follow a consistent structure:
+## For Developers
 
-**Success Response:**
+All technical documentation, including setup, testing, building, and release processes, is in:
 
-```json
-{
-  "success": true,
-  "status": 200,
-  "timestamp": "2026-03-04T10:30:00Z",
-  "requestId": "550e8400-e29b-41d4-a716-446655440000",
-  "path": "/api/users",
-  "method": "GET",
-  "message": "Users retrieved successfully",
-  "data": {
-    "id": 1,
-    "name": "Aman",
-    "email": "aman@example.com",
-    "age": 22
-  },
-  "meta": {
-    "apiVersion": "v1"
-  }
-}
-```
+**[📖 Development Guide](DEVELOPMENT.md)**
 
-**Error Response:**
+Quick links:
 
-```json
-{
-  "success": false,
-  "status": 422,
-  "timestamp": "2026-03-04T10:30:00Z",
-  "requestId": "550e8400-e29b-41d4-a716-446655440000",
-  "path": "/api/users",
-  "method": "POST",
-  "error": {
-    "type": "VALIDATION_ERROR",
-    "code": "INVALID_REQUEST_BODY",
-    "userMessage": "Some fields in your request are invalid.",
-    "developerMessage": "Request validation failed. Check validationErrors for details.",
-    "validationErrors": [
-      {
-        "field": "Age",
-        "message": "Age must be a number, but received a string",
-        "rejectedValue": "22"
-      }
-    ],
-    "retryable": false
-  }
-}
-```
-
-## Build
-
-```bash
-# Build binary
-make build
-# OR
-go build -o bin/my-project ./cmd/my-project
-
-# Run binary
-./bin/my-project
-```
-
-## Testing
-
-```bash
-# Run all tests
-make test
-# OR
-go test ./... -v
-
-# Run tests with coverage
-make test-coverage
-# OR
-go test ./... -cover
-```
-
-## Available Make Commands
-
-```bash
-make run            # Run the application
-make dev            # Run with auto-reload (requires air)
-make test           # Run all tests
-make test-coverage  # Generate coverage report
-make build          # Build binary to bin/
-make clean          # Remove build artifacts
-make deps           # Download dependencies
-make fmt            # Format code
-make lint           # Run linter
-make help           # Show all commands
-```
-
-## Project Structure
-
-```
-my-project/
-├── cmd/my-project/          # Application entry point
-├── internal/
-│   ├── app/                # Application initialization
-│   ├── config/             # Configuration management
-│   ├── constants/          # Error codes and constants
-│   ├── handlers/           # HTTP request handlers
-│   ├── middleware/         # HTTP middleware
-│   ├── server/             # HTTP server setup
-│   ├── types/              # Data models and types
-│   └── utils/              # Utility functions
-├── config/                 # Configuration files
-└── storage/                # Database/storage files
-```
-
-## Dependencies
-
-- Go 1.25.0+
-- github.com/google/uuid - UUID generation
-- github.com/ilyakaznacheev/cleanenv - Configuration management
-- github.com/joho/godotenv - Environment file loading
+- [Development Setup](DEVELOPMENT.md#development-setup) - Local setup and configuration
+- [Configuration](DEVELOPMENT.md#configuration) - Environment setup
+- [Project Structure](DEVELOPMENT.md#project-structure) - Code organization
+- [Testing](DEVELOPMENT.md#testing) - Running tests and coverage
+- [Building](DEVELOPMENT.md#building) - Creating binaries
+- [Docker Development](DEVELOPMENT.md#docker-development) - Container workflows
+- [API Documentation](DEVELOPMENT.md#api-documentation) - Response formats and endpoints
+- [Release Process](DEVELOPMENT.md#release-process) - How to release
+- [CI/CD Pipeline](DEVELOPMENT.md#cicd-pipeline) - Automated workflows
+- [Troubleshooting](DEVELOPMENT.md#troubleshooting) - Common issues
 
 ## About
 
@@ -225,6 +141,7 @@ This is a learning project to demonstrate best practices in Go API development. 
 ## Contributing
 
 We welcome contributions! Please see:
+
 - [DEVELOPMENT.md](DEVELOPMENT.md) - Development guide and setup
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Community guidelines
