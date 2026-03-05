@@ -1,0 +1,81 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+*.out
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Build cache
+.cache/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+vendor/
+
+# Coverage reports
+coverage.out
+coverage.html
+*.coverprofile
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Air (hot reload) config
+.air.toml
+
+# Makefile
+Makefile
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Storage (if used for local dev)
+storage/
+data/
+*.db
+*.sqlite
