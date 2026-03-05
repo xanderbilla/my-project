@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-project-app
+    ports:
+      - "8080:8080"
+    environment:
+      - ENV=prod
+      - LOG_LEVEL=INFO
+      - STORAGE_PATH=/app/data
+    volumes:
+      - app-data:/app/data
+      - ./config:/app/config:ro
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/health",
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # Development service with hot reload
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: my-project-app-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - ENV=dev
+      - LOG_LEVEL=DEBUG
+      - STORAGE_PATH=/app/data
+    volumes:
+      - .:/app
+      - /app/bin
+      - app-data:/app/data
+    restart: unless-stopped
+    networks:
+      - app-network
+    command: air -c .air.toml
+    profiles:
+      - dev
+
+volumes:
+  app-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
