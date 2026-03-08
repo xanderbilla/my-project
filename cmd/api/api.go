@@ -18,6 +18,7 @@ type application struct {
 type config struct {
 	addr string
 	db   dbConfig
+	env  string
 }
 
 type dbConfig struct {
@@ -50,7 +51,7 @@ func (app *application) mount() http.Handler {
 
 func (app *application) run(mux http.Handler) error {
 
-	// confiure the server
+	// configure the server
 	srv := http.Server{
 		Addr:         app.config.addr,
 		Handler:      mux,
@@ -59,7 +60,7 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	log.Printf("Server started at port%s ...", app.config.addr)
+	log.Printf("Server started at port %s ...", app.config.addr)
 
 	// start the server (starting point)
 	return srv.ListenAndServe()
